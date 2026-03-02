@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import NLInputBar from './NLInputBar.vue';
+import type { NLParseResponse } from '@muscat/shared';
 
 const route = useRoute();
 
-defineEmits<{ navigate: [] }>();
+defineEmits<{ navigate: []; parsed: [result: NLParseResponse] }>();
 
 const navItems = [
   { path: '/', name: 'Inbox', icon: '\u{1F4E5}' },
@@ -18,9 +20,9 @@ const navItems = [
     <!-- App title -->
     <h1 class="text-lg font-bold text-white mb-6 px-2">Muscat</h1>
 
-    <!-- NL Input placeholder -->
-    <div class="mb-4" id="nl-input-slot">
-      <!-- NLInputBar will be added in Task 22 -->
+    <!-- NL Input -->
+    <div class="mb-4">
+      <NLInputBar @parsed="$emit('parsed', $event)" />
     </div>
 
     <!-- Navigation -->

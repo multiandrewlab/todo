@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Sidebar from './Sidebar.vue';
+import TaskModal from './TaskModal.vue';
+import type { NLParseResponse } from '@muscat/shared';
 
 const sidebarOpen = ref(true);
+const parsedResult = ref<NLParseResponse | null>(null);
+
+function handleParsed(result: NLParseResponse) {
+  parsedResult.value = result;
+}
+
+function closeModal() {
+  parsedResult.value = null;
+}
 </script>
 
 <template>
@@ -24,7 +35,7 @@ const sidebarOpen = ref(true);
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
-      <Sidebar @navigate="sidebarOpen = false" />
+      <Sidebar @navigate="sidebarOpen = false" @parsed="handleParsed" />
     </aside>
 
     <!-- Backdrop on mobile -->
@@ -38,5 +49,13 @@ const sidebarOpen = ref(true);
     <main class="flex-1 overflow-y-auto p-4 lg:p-6">
       <router-view />
     </main>
+
+    <!-- NL Parse Modal -->
+    <TaskModal
+      v-if="parsedResult"
+      :prefill="parsedResult"
+      @close="closeModal"
+      @saved="closeModal"
+    />
   </div>
 </template>
