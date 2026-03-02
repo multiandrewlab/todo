@@ -30,9 +30,15 @@ attachments.post('/', async (c) => {
     httpMetadata: { contentType: file.type },
   });
 
-  await c.env.DB.prepare(
-    'INSERT INTO attachments (id, user_id, task_id, file_name, r2_key, content_type, file_size) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).bind(attachmentId, userId, taskId, file.name, r2Key, file.type, file.size).run();
+  try {
+    await c.env.DB.prepare(
+      'INSERT INTO attachments (id, user_id, task_id, file_name, r2_key, content_type, file_size) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(attachmentId, userId, taskId, file.name, r2Key, file.type, file.size).run();
+  } catch (e) {
+    // Clean up R2 object on DB failure
+    await c.env.BUCKET.delete(r2Key);
+    throw e;
+  }
 
   return c.json({
     id: attachmentId,

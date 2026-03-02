@@ -10,7 +10,7 @@ import type { NLParseResponse, Task } from '@muscat/shared';
 const sidebarOpen = ref(true);
 const parsedResult = ref<NLParseResponse | null>(null);
 const searchActive = ref(false);
-const { tasks: searchResults, loading: searchLoading, fetchTasks: searchTasks } = useTasks();
+const { tasks: searchResults, loading: searchLoading, fetchTasks: searchTasks, archiveTask } = useTasks();
 
 function handleParsed(result: NLParseResponse) {
   parsedResult.value = result;
@@ -30,8 +30,6 @@ function handleSearchClear() {
 }
 
 async function handleSearchArchive(taskId: string) {
-  const { useTasks: useT } = await import('../composables/useTasks');
-  const { archiveTask } = useT();
   await archiveTask(taskId);
 }
 </script>

@@ -71,13 +71,13 @@ CREATE TABLE IF NOT EXISTS attachments (
 `;
 
 const SEED_SQL = `
-INSERT OR IGNORE INTO users (id, email) VALUES ('user_001', 'andrew.hunt@fundamentalmedia.com');
-INSERT OR IGNORE INTO user_settings (user_id, setting_name, setting_value) VALUES ('user_001', 'email_allowlist', '["andrew.hunt@fundamentalmedia.com","andy@mrhunt.co.uk","ahunt83@gmail.com"]');
+INSERT OR IGNORE INTO users (id, email) VALUES ('user_001', 'test-user@example.com');
+INSERT OR IGNORE INTO user_settings (user_id, setting_name, setting_value) VALUES ('user_001', 'email_allowlist', '["test-user@example.com","test-alt@example.com","test-other@example.com"]');
 `;
 
 async function getAuthCookie(): Promise<string> {
   const token = await createToken(
-    { sub: 'user_001', email: 'andrew.hunt@fundamentalmedia.com' },
+    { sub: 'user_001', email: 'test-user@example.com' },
     'dev-secret-change-in-prod'
   );
   return `token=${token}`;
@@ -85,7 +85,7 @@ async function getAuthCookie(): Promise<string> {
 
 async function getExpiredCookie(): Promise<string> {
   const token = await createToken(
-    { sub: 'user_001', email: 'andrew.hunt@fundamentalmedia.com' },
+    { sub: 'user_001', email: 'test-user@example.com' },
     'dev-secret-change-in-prod',
     -1 // already expired
   );
@@ -126,7 +126,7 @@ describe('Auth endpoints', () => {
     expect(res.status).toBe(200);
     const data = (await res.json()) as { id: string; email: string };
     expect(data.id).toBe('user_001');
-    expect(data.email).toBe('andrew.hunt@fundamentalmedia.com');
+    expect(data.email).toBe('test-user@example.com');
   });
 
   it('GET /api/v1/auth/me returns 401 with expired JWT', async () => {

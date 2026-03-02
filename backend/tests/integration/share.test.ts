@@ -71,13 +71,13 @@ CREATE TABLE IF NOT EXISTS attachments (
 `;
 
 const SEED_SQL = `
-INSERT OR IGNORE INTO users (id, email) VALUES ('user_001', 'andrew.hunt@fundamentalmedia.com');
-INSERT OR IGNORE INTO user_settings (user_id, setting_name, setting_value) VALUES ('user_001', 'email_allowlist', '["andrew.hunt@fundamentalmedia.com","andy@mrhunt.co.uk","ahunt83@gmail.com"]');
+INSERT OR IGNORE INTO users (id, email) VALUES ('user_001', 'test-user@example.com');
+INSERT OR IGNORE INTO user_settings (user_id, setting_name, setting_value) VALUES ('user_001', 'email_allowlist', '["test-user@example.com","test-alt@example.com","test-other@example.com"]');
 `;
 
 async function getAuthCookie(): Promise<string> {
   const token = await createToken(
-    { sub: 'user_001', email: 'andrew.hunt@fundamentalmedia.com' },
+    { sub: 'user_001', email: 'test-user@example.com' },
     'dev-secret-change-in-prod'
   );
   return `token=${token}`;

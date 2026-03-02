@@ -13,7 +13,7 @@ function generateId(prefix: string = ''): string {
 
 export default {
   async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext) {
-    const senderEmail = message.from;
+    const senderEmail = message.from.toLowerCase().trim();
 
     // Check sender against all users' email_allowlist settings
     const allowedSenders = await env.DB.prepare(
@@ -24,7 +24,7 @@ export default {
     for (const row of allowedSenders.results) {
       try {
         const allowlist: string[] = JSON.parse(row.setting_value as string);
-        if (allowlist.includes(senderEmail)) {
+        if (allowlist.some(email => email.toLowerCase().trim() === senderEmail)) {
           matchedUserId = row.user_id as string;
           break;
         }
