@@ -8,6 +8,14 @@ const auth = new Hono<{ Bindings: Env }>();
 // Redirect to Google OAuth
 auth.get('/login', (c) => {
   const redirectUri = `${new URL(c.req.url).origin}/api/v1/auth/callback`;
+  const state = crypto.randomUUID();
+  setCookie(c, 'oauth_state', state, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Lax',
+    path: '/',
+    maxAge: 600, // 10 minutes
+  });
   const params = new URLSearchParams({
     client_id: c.env.GOOGLE_CLIENT_ID,
     redirect_uri: redirectUri,
@@ -15,6 +23,7 @@ auth.get('/login', (c) => {
     scope: 'openid email profile',
     access_type: 'offline',
     prompt: 'consent',
+    state,
   });
   return c.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
 });
@@ -23,6 +32,13 @@ auth.get('/login', (c) => {
 auth.get('/callback', async (c) => {
   const code = c.req.query('code');
   if (!code) return c.json({ error: 'No code provided' }, 400);
+
+  const state = c.req.query('state');
+  const storedState = getCookie(c, 'oauth_state');
+  if (!state || state !== storedState) {
+    return c.json({ error: 'Invalid state parameter' }, 400);
+  }
+  deleteCookie(c, 'oauth_state', { path: '/' });
 
   const redirectUri = `${new URL(c.req.url).origin}/api/v1/auth/callback`;
 

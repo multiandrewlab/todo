@@ -7,7 +7,8 @@ const share = new Hono<AppEnv>();
 
 share.get('/', async (c) => {
   const userId = c.var.userId;
-  const title = c.req.query('title') || c.req.query('text') || 'Shared item';
+  const rawTitle = c.req.query('title') || c.req.query('text') || 'Shared item';
+  const title = rawTitle.slice(0, 500); // Reasonable limit
   const url = c.req.query('url') || null;
 
   const id = generateId('task');

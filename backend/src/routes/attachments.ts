@@ -18,6 +18,11 @@ attachments.post('/', async (c) => {
   const file = formData.get('file') as File | null;
   if (!file) return c.json({ error: 'No file provided' }, 400);
 
+  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB safety limit
+  if (file.size > MAX_FILE_SIZE) {
+    return c.json({ error: `File too large. Maximum size is 100MB.` }, 413);
+  }
+
   const attachmentId = generateId('att');
   const r2Key = `${userId}/${taskId}/${attachmentId}/${file.name}`;
 

@@ -2,7 +2,7 @@ import type { NLParseResponse } from '@muscat/shared';
 
 export async function parseNaturalLanguage(
   text: string,
-  ai: any, // Ai type from Workers
+  ai: Ai,
   today: string = new Date().toISOString().split('T')[0]
 ): Promise<NLParseResponse> {
   const result = await ai.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {

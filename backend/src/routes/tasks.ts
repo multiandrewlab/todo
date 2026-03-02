@@ -103,6 +103,10 @@ tasks.post('/', async (c) => {
   const userId = c.var.userId;
   const body = await c.req.json<CreateTaskRequest>();
 
+  if (!body.title?.trim()) {
+    return c.json({ error: 'Title is required' }, 400);
+  }
+
   const id = generateId('task');
   const recurrenceRule = body.recurrence_rule
     ? JSON.stringify(body.recurrence_rule)

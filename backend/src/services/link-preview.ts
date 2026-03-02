@@ -27,16 +27,21 @@ export function parseLinkPreview(html: string, baseUrl: string): LinkPreview {
 }
 
 export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Muscat-Bot/1.0' },
       redirect: 'follow',
+      signal: controller.signal,
     });
     if (!res.ok) return { title: null, favicon: null };
     const html = await res.text();
     return parseLinkPreview(html, url);
   } catch {
     return { title: null, favicon: null };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
