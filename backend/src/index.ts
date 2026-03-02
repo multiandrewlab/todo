@@ -4,6 +4,7 @@ import type { AppEnv } from './bindings.js';
 import { auth } from './routes/auth.js';
 import { tasks } from './routes/tasks.js';
 import { tags } from './routes/tags.js';
+import { attachments } from './routes/attachments.js';
 import { requireAuth } from './middleware/auth.js';
 
 const app = new Hono<AppEnv>();
@@ -22,6 +23,10 @@ app.route('/api/v1/auth', auth);
 app.use('/api/v1/tasks/*', requireAuth);
 app.use('/api/v1/tasks', requireAuth);
 app.route('/api/v1/tasks', tasks);
+
+app.use('/api/v1/tasks/:taskId/attachments/*', requireAuth);
+app.use('/api/v1/tasks/:taskId/attachments', requireAuth);
+app.route('/api/v1/tasks/:taskId/attachments', attachments);
 
 app.use('/api/v1/tags/*', requireAuth);
 app.use('/api/v1/tags', requireAuth);
