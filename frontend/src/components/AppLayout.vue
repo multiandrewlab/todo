@@ -2,10 +2,15 @@
 import { ref } from 'vue';
 import Sidebar from './Sidebar.vue';
 import TaskModal from './TaskModal.vue';
-import type { NLParseResponse } from '@muscat/shared';
+import SearchBar from './SearchBar.vue';
+import TaskRow from './TaskRow.vue';
+import { useTasks } from '../composables/useTasks';
+import type { NLParseResponse, Task } from '@muscat/shared';
 
 const sidebarOpen = ref(true);
 const parsedResult = ref<NLParseResponse | null>(null);
+const searchActive = ref(false);
+const { tasks: searchResults, loading: searchLoading, fetchTasks: searchTasks } = useTasks();
 
 function handleParsed(result: NLParseResponse) {
   parsedResult.value = result;
@@ -13,6 +18,21 @@ function handleParsed(result: NLParseResponse) {
 
 function closeModal() {
   parsedResult.value = null;
+}
+
+async function handleSearch(query: string, includeArchived: boolean) {
+  searchActive.value = true;
+  await searchTasks({ search: query, include_archived: includeArchived });
+}
+
+function handleSearchClear() {
+  searchActive.value = false;
+}
+
+async function handleSearchArchive(taskId: string) {
+  const { useTasks: useT } = await import('../composables/useTasks');
+  const { archiveTask } = useT();
+  await archiveTask(taskId);
 }
 </script>
 
@@ -47,7 +67,25 @@ function closeModal() {
 
     <!-- Main content -->
     <main class="flex-1 overflow-y-auto p-4 lg:p-6">
-      <router-view />
+      <SearchBar @search="handleSearch" @clear="handleSearchClear" />
+
+      <!-- Search results overlay -->
+      <div v-if="searchActive">
+        <h2 class="text-lg font-semibold mb-3">Search Results</h2>
+        <div v-if="searchLoading" class="text-gray-400 text-sm py-4">Searching...</div>
+        <div v-else-if="searchResults.length === 0" class="text-gray-500 text-sm py-4">No tasks found.</div>
+        <div v-else>
+          <TaskRow
+            v-for="task in searchResults"
+            :key="task.id"
+            :task="task"
+            @archive="handleSearchArchive"
+          />
+        </div>
+      </div>
+
+      <!-- Normal route content -->
+      <router-view v-if="!searchActive" />
     </main>
 
     <!-- NL Parse Modal -->
