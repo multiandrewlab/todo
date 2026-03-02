@@ -1,6 +1,16 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import TaskList from '../components/TaskList.vue';
+import type { Task } from '@muscat/shared';
+
+const editingTask = ref<Task | null>(null);
+</script>
+
 <template>
   <div>
-    <h2 class="text-xl font-semibold mb-4">Inbox</h2>
-    <p class="text-gray-400">No tasks in inbox.</p>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold">Inbox</h2>
+    </div>
+    <TaskList status="inbox" @edit="editingTask = $event" />
   </div>
 </template>
