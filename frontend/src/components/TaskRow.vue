@@ -8,10 +8,48 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   archive: [id: string];
+  activate: [id: string];
   edit: [task: Task];
 }>();
 
 const expanded = ref(false);
+
+// Swipe gesture state
+const touchStartX = ref(0);
+const touchDeltaX = ref(0);
+const isSwiping = ref(false);
+const isAnimating = ref(false);
+
+function onTouchStart(e: TouchEvent) {
+  if (isAnimating.value) return;
+  touchStartX.value = e.touches[0].clientX;
+  isSwiping.value = true;
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (!isSwiping.value) return;
+  touchDeltaX.value = e.touches[0].clientX - touchStartX.value;
+}
+
+function onTouchEnd() {
+  if (!isSwiping.value) return;
+  if (touchDeltaX.value < -100) {
+    emit('archive', props.task.id);
+  } else if (touchDeltaX.value > 100 && props.task.status === 'inbox') {
+    emit('activate', props.task.id);
+  }
+  // Snap back with animation
+  isAnimating.value = true;
+  touchDeltaX.value = 0;
+  isSwiping.value = false;
+  setTimeout(() => { isAnimating.value = false; }, 300);
+}
+
+const swipeBackground = computed(() => {
+  if (touchDeltaX.value < -30) return 'archive';
+  if (touchDeltaX.value > 30 && props.task.status === 'inbox') return 'activate';
+  return null;
+});
 
 const dueDateClass = computed(() => {
   if (!props.task.due_date) return '';
@@ -29,8 +67,30 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <div class="group border-b border-gray-800 hover:bg-gray-900/50 transition-colors">
-    <div class="flex items-center gap-3 px-3 py-2 cursor-pointer" @click="expanded = !expanded">
+  <div class="group border-b border-gray-800 hover:bg-gray-900/50 transition-colors relative overflow-hidden">
+    <!-- Swipe backgrounds -->
+    <div
+      v-if="swipeBackground === 'archive'"
+      class="absolute inset-0 bg-red-900/80 flex items-center justify-end pr-4"
+    >
+      <span class="text-sm font-medium text-red-200">Archive</span>
+    </div>
+    <div
+      v-if="swipeBackground === 'activate'"
+      class="absolute inset-0 bg-green-900/80 flex items-center pl-4"
+    >
+      <span class="text-sm font-medium text-green-200">Activate</span>
+    </div>
+
+    <!-- Swipeable content -->
+    <div
+      class="flex items-center gap-3 px-3 py-2 cursor-pointer relative bg-gray-950"
+      :style="{ transform: `translateX(${touchDeltaX}px)`, transition: isAnimating ? 'transform 0.3s ease' : 'none' }"
+      @click="expanded = !expanded"
+      @touchstart="onTouchStart"
+      @touchmove="onTouchMove"
+      @touchend="onTouchEnd"
+    >
       <!-- Archive checkbox -->
       <button
         v-if="task.status !== 'archived'"
