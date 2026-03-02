@@ -44,13 +44,16 @@ tasks.get('/', async (c) => {
 
   let query: string;
   if (search) {
-    // Escape FTS5 special characters by wrapping each term in double quotes
+    // Strip non-word characters and wrap each term in quotes to prevent FTS5 syntax errors
     const sanitizedSearch = search
-      .replace(/"/g, '')
+      .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
       .filter(Boolean)
       .map((term) => `"${term}"`)
       .join(' ');
+    if (!sanitizedSearch) {
+      return c.json({ tasks: [] });
+    }
     query = `
       SELECT t.* FROM tasks t
       INNER JOIN tasks_fts ON tasks_fts.rowid = t.rowid
