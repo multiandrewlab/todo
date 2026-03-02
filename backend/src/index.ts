@@ -6,6 +6,7 @@ import { tasks } from './routes/tasks.js';
 import { tags } from './routes/tags.js';
 import { attachments } from './routes/attachments.js';
 import { ai } from './routes/ai.js';
+import { settings } from './routes/settings.js';
 import { requireAuth } from './middleware/auth.js';
 
 const app = new Hono<AppEnv>();
@@ -36,5 +37,9 @@ app.route('/api/v1/tags', tags);
 app.use('/api/v1/ai/*', requireAuth);
 app.use('/api/v1/ai', requireAuth);
 app.route('/api/v1/ai', ai);
+
+app.use('/api/v1/settings/*', requireAuth);
+app.use('/api/v1/settings', requireAuth);
+app.route('/api/v1/settings', settings);
 
 export default app;
