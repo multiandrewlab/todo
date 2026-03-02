@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuth } from '../composables/useAuth';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +27,17 @@ const router = createRouter({
       ],
     },
   ],
+});
+
+router.beforeEach(async (to) => {
+  if (to.meta.public) return;
+
+  const { checkAuth } = useAuth();
+  const isAuthed = await checkAuth();
+
+  if (!isAuthed) {
+    return { name: 'login' };
+  }
 });
 
 export default router;
