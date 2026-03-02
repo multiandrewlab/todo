@@ -98,3 +98,7 @@ export interface NLParseResponse {
   status?: 'inbox' | 'active';
   tags?: string[]; // tag names (may include new ones)
 }
+
+export interface TranscribeResponse {
+  text: string;
+}
