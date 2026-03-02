@@ -67,7 +67,8 @@ attachments.get('/:attachmentId/download', async (c) => {
 
   const headers = new Headers();
   headers.set('Content-Type', (attachment.content_type as string) || 'application/octet-stream');
-  headers.set('Content-Disposition', `attachment; filename="${attachment.file_name}"`);
+  const sanitizedName = (attachment.file_name as string).replace(/[\r\n"]/g, '_');
+  headers.set('Content-Disposition', `attachment; filename="${sanitizedName}"`);
 
   return new Response(object.body, { headers });
 });

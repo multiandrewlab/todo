@@ -44,6 +44,13 @@ tasks.get('/', async (c) => {
 
   let query: string;
   if (search) {
+    // Escape FTS5 special characters by wrapping each term in double quotes
+    const sanitizedSearch = search
+      .replace(/"/g, '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((term) => `"${term}"`)
+      .join(' ');
     query = `
       SELECT t.* FROM tasks t
       INNER JOIN tasks_fts ON tasks_fts.rowid = t.rowid
@@ -51,7 +58,7 @@ tasks.get('/', async (c) => {
       ORDER BY rank, t.due_date ASC NULLS LAST, t.created_at DESC
       LIMIT ? OFFSET ?
     `;
-    params.push(search, limit, offset);
+    params.push(sanitizedSearch, limit, offset);
   } else {
     query = `
       SELECT t.* FROM tasks t
@@ -131,6 +138,17 @@ tasks.post('/', async (c) => {
 
   // Handle tag associations
   if (body.tag_ids && body.tag_ids.length > 0) {
+    // Verify all tags belong to the authenticated user
+    const placeholders = body.tag_ids.map(() => '?').join(',');
+    const ownedTags = await db
+      .prepare(`SELECT id FROM tags WHERE id IN (${placeholders}) AND user_id = ?`)
+      .bind(...body.tag_ids, userId)
+      .all<{ id: string }>();
+    const ownedIds = new Set(ownedTags.results.map((t) => t.id));
+    const invalidIds = body.tag_ids.filter((id) => !ownedIds.has(id));
+    if (invalidIds.length > 0) {
+      return c.json({ error: 'Invalid tag IDs' }, 400);
+    }
     const stmts = body.tag_ids.map((tagId) =>
       db.prepare('INSERT INTO task_tags (task_id, tag_id) VALUES (?, ?)').bind(id, tagId)
     );
@@ -241,6 +259,19 @@ tasks.put('/:id', async (c) => {
 
   // Handle tag updates
   if (body.tag_ids !== undefined) {
+    if (body.tag_ids.length > 0) {
+      // Verify all tags belong to the authenticated user
+      const placeholders = body.tag_ids.map(() => '?').join(',');
+      const ownedTags = await db
+        .prepare(`SELECT id FROM tags WHERE id IN (${placeholders}) AND user_id = ?`)
+        .bind(...body.tag_ids, userId)
+        .all<{ id: string }>();
+      const ownedIds = new Set(ownedTags.results.map((t) => t.id));
+      const invalidIds = body.tag_ids.filter((id) => !ownedIds.has(id));
+      if (invalidIds.length > 0) {
+        return c.json({ error: 'Invalid tag IDs' }, 400);
+      }
+    }
     await db.prepare('DELETE FROM task_tags WHERE task_id = ?').bind(taskId).run();
     if (body.tag_ids.length > 0) {
       const stmts = body.tag_ids.map((tagId) =>
@@ -292,7 +323,12 @@ tasks.post('/:id/archive', async (c) => {
 
   // If recurring, create next occurrence
   if (task.recurrence_rule && task.due_date) {
-    const rule = JSON.parse(task.recurrence_rule);
+    let rule;
+    try {
+      rule = JSON.parse(task.recurrence_rule);
+    } catch {
+      return c.json({ archived: archivedTask });
+    }
     const today = new Date().toISOString().split('T')[0];
     const nextDueDate = getNextOccurrence(task.due_date, rule, today);
 
