@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { Task, Tag } from '@muscat/shared';
+import { ref, computed, watch } from 'vue';
+import type { Task, Tag, Attachment } from '@muscat/shared';
+import AttachmentList from './AttachmentList.vue';
+import { useTasks } from '../composables/useTasks';
 
 const props = defineProps<{
   task: Task & { tags?: Tag[] };
@@ -13,6 +15,25 @@ const emit = defineEmits<{
 }>();
 
 const expanded = ref(false);
+const attachments = ref<Attachment[]>([]);
+const detailsLoaded = ref(false);
+const { getTask } = useTasks();
+
+watch(expanded, async (isExpanded) => {
+  if (isExpanded && !detailsLoaded.value) {
+    try {
+      const full = await getTask(props.task.id);
+      attachments.value = (full as any).attachments || [];
+      detailsLoaded.value = true;
+    } catch (e) {
+      console.error('Failed to load task details:', e);
+    }
+  }
+});
+
+function handleAttachmentDeleted(attId: string) {
+  attachments.value = attachments.value.filter(a => a.id !== attId);
+}
 
 // Swipe gesture state
 const touchStartX = ref(0);
@@ -152,6 +173,12 @@ const formattedDate = computed(() => {
         <a :href="task.url" target="_blank" class="hover:underline">{{ task.url }}</a>
       </p>
       <p v-if="task.recurrence_rule" class="text-xs text-gray-500 mt-1">Recurring task</p>
+      <AttachmentList
+        v-if="attachments.length"
+        :task-id="task.id"
+        :attachments="attachments"
+        @deleted="handleAttachmentDeleted"
+      />
     </div>
   </div>
 </template>
