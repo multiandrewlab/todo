@@ -7,3 +7,8 @@ export interface Env {
   GOOGLE_CLIENT_SECRET: string;
   JWT_SECRET: string;
 }
+
+export type AppEnv = {
+  Bindings: Env;
+  Variables: { userId: string; userEmail: string };
+};

@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import type { Env } from './bindings.js';
+import type { AppEnv } from './bindings.js';
 import { auth } from './routes/auth.js';
+import { tasks } from './routes/tasks.js';
+import { requireAuth } from './middleware/auth.js';
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<AppEnv>();
 
 app.use('/*', async (c, next) => {
   const corsMiddleware = cors({
@@ -15,5 +17,9 @@ app.use('/*', async (c, next) => {
 
 app.get('/api/v1/health', (c) => c.json({ status: 'ok' }));
 app.route('/api/v1/auth', auth);
+
+app.use('/api/v1/tasks/*', requireAuth);
+app.use('/api/v1/tasks', requireAuth);
+app.route('/api/v1/tasks', tasks);
 
 export default app;
