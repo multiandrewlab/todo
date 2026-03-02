@@ -23,7 +23,7 @@ tasks.get('/', async (c) => {
   const conditions: string[] = ['t.user_id = ?'];
   const params: unknown[] = [userId];
 
-  if (!includeArchived) {
+  if (!includeArchived && status !== 'archived') {
     conditions.push("t.status != 'archived'");
   }
 
