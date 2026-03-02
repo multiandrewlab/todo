@@ -3,6 +3,7 @@ import type { AppEnv } from '../bindings.js';
 import { generateId } from '../lib/id.js';
 import { getNextOccurrence } from '@muscat/shared';
 import type { CreateTaskRequest, UpdateTaskRequest, Task, Tag, Attachment } from '@muscat/shared';
+import { fetchAndUpdateLinkPreview } from '../services/link-preview.js';
 
 export const tasks = new Hono<AppEnv>();
 
@@ -132,6 +133,11 @@ tasks.post('/', async (c) => {
     await db.batch(stmts);
   }
 
+  const url = body.url || null;
+  if (url) {
+    c.executionCtx.waitUntil(fetchAndUpdateLinkPreview(c.env.DB, id, url));
+  }
+
   const task = await db.prepare('SELECT * FROM tasks WHERE id = ?').bind(id).first<Task>();
   return c.json(task, 201);
 });
@@ -238,6 +244,10 @@ tasks.put('/:id', async (c) => {
       );
       await db.batch(stmts);
     }
+  }
+
+  if (body.url !== undefined && body.url) {
+    c.executionCtx.waitUntil(fetchAndUpdateLinkPreview(c.env.DB, taskId, body.url));
   }
 
   const updated = await db
