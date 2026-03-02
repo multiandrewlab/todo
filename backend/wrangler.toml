@@ -1,0 +1,19 @@
+name = "muscat-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "muscat-db"
+database_id = "local"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "muscat-attachments"
+
+[ai]
+binding = "AI"
+
+[vars]
+FRONTEND_URL = "http://localhost:5173"
