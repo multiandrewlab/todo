@@ -67,20 +67,20 @@ async function handleLogout() {
 
 <template>
   <div>
-    <h2 class="text-xl font-semibold mb-6">Settings</h2>
+    <h2 class="text-xl font-semibold text-neutral-50 mb-6">Settings</h2>
 
     <!-- Current user -->
-    <div class="mb-8">
-      <h3 class="text-sm font-medium text-gray-300 mb-2">Account</h3>
-      <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+    <div class="mb-6">
+      <h3 class="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2 px-1">Account</h3>
+      <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-200">{{ user?.email }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">Signed in</p>
+            <p class="text-sm font-medium text-neutral-200">{{ user?.email }}</p>
+            <p class="text-xs text-neutral-500 mt-0.5">Signed in</p>
           </div>
           <button
             @click="handleLogout"
-            class="px-3 py-1.5 text-sm text-red-400 border border-red-800 rounded hover:bg-red-900/30 transition-colors"
+            class="px-4 py-2 text-sm font-medium text-red-400 border border-neutral-700 rounded-xl hover:bg-red-500/10 transition-colors"
           >
             Logout
           </button>
@@ -90,10 +90,10 @@ async function handleLogout() {
 
     <!-- Email allowlist -->
     <div>
-      <h3 class="text-sm font-medium text-gray-300 mb-2">Email Allowlist</h3>
-      <p class="text-xs text-gray-500 mb-3">Only these email addresses can sign in.</p>
+      <h3 class="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2 px-1">Email Allowlist</h3>
+      <p class="text-xs text-neutral-500 mb-3 px-1">Only these email addresses can sign in.</p>
 
-      <div v-if="loading" class="text-gray-400 text-sm py-4">Loading...</div>
+      <div v-if="loading" class="text-neutral-400 text-sm py-8 text-center">Loading...</div>
 
       <div v-else>
         <!-- Add email form -->
@@ -102,36 +102,39 @@ async function handleLogout() {
             v-model="newEmail"
             type="email"
             placeholder="user@example.com"
-            class="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 outline-none"
+            class="flex-1 px-4 py-2.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 placeholder-neutral-500 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
           />
           <button
             type="submit"
             :disabled="saving"
-            class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors disabled:opacity-50"
+            class="px-5 py-2.5 text-sm font-medium bg-indigo-500 text-white rounded-xl hover:bg-indigo-400 transition-colors disabled:opacity-50"
           >
             Add
           </button>
         </form>
 
-        <p v-if="error" class="text-xs text-red-400 mb-2">{{ error }}</p>
+        <p v-if="error" class="text-xs text-red-400 mb-2 px-1">{{ error }}</p>
 
         <!-- Email list -->
-        <div class="space-y-1">
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
           <div
-            v-for="email in allowedEmails"
+            v-for="(email, index) in allowedEmails"
             :key="email"
-            class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded px-3 py-2"
+            :class="[
+              'flex items-center justify-between px-4 py-3',
+              index < allowedEmails.length - 1 ? 'border-b border-neutral-800' : ''
+            ]"
           >
-            <span class="text-sm text-gray-300">{{ email }}</span>
+            <span class="text-sm text-neutral-200">{{ email }}</span>
             <button
               @click="removeEmail(email)"
               :disabled="saving"
-              class="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
+              class="text-xs font-medium text-red-400 hover:text-red-300 disabled:opacity-50 transition-colors"
             >
               Remove
             </button>
           </div>
-          <p v-if="allowedEmails.length === 0" class="text-sm text-gray-500 py-2">
+          <p v-if="allowedEmails.length === 0" class="text-sm text-neutral-500 py-4 text-center">
             No emails in allowlist. Anyone with a Google account can sign in.
           </p>
         </div>

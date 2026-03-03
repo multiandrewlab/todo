@@ -25,8 +25,8 @@ watch(() => props.status, () => fetchTasks({ status: props.status }));
 
 <template>
   <div>
-    <div v-if="loading" class="text-gray-400 text-sm py-4">Loading...</div>
-    <div v-else-if="tasks.length === 0" class="text-gray-500 text-sm py-4">
+    <div v-if="loading" class="text-neutral-400 text-sm py-8 text-center">Loading...</div>
+    <div v-else-if="tasks.length === 0" class="text-neutral-500 text-sm py-8 text-center">
       {{ status === 'inbox' ? 'Inbox is empty.' : status === 'active' ? 'No active tasks.' : 'No archived tasks.' }}
     </div>
     <div v-else>

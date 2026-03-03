@@ -8,8 +8,8 @@ const editingTask = ref<Task | null>(null);
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-semibold">Archived</h2>
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-semibold text-neutral-50">Archived</h2>
     </div>
     <TaskList status="archived" @edit="editingTask = $event" />
   </div>
