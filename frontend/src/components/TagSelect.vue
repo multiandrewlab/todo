@@ -48,56 +48,56 @@ function remove(tagId: string) {
 <template>
   <div class="relative">
     <!-- Selected chips -->
-    <div class="flex flex-wrap gap-1 mb-1">
+    <div class="flex flex-wrap gap-1.5 mb-1.5">
       <span
         v-for="tag in selectedTags"
         :key="tag.id"
-        class="text-xs px-2 py-0.5 rounded bg-gray-700 text-gray-200 flex items-center gap-1"
+        class="text-xs px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-200 flex items-center gap-1.5 font-medium"
       >
         {{ tag.name }}
-        <button @click="remove(tag.id)" class="hover:text-red-400">&times;</button>
+        <button @click="remove(tag.id)" class="hover:text-red-400 transition-colors">&times;</button>
       </span>
     </div>
 
     <!-- Dropdown trigger -->
     <button
       type="button"
-      class="w-full text-left px-3 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 hover:border-gray-600"
+      class="w-full text-left px-4 py-2 bg-neutral-800 rounded-xl text-sm text-neutral-300 hover:bg-neutral-700/50 transition-colors"
       @click="open = !open"
     >
       {{ selectedTags.length ? `${selectedTags.length} selected` : 'Select tags...' }}
     </button>
 
     <!-- Dropdown -->
-    <div v-if="open" class="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg max-h-48 overflow-y-auto">
+    <div v-if="open" class="absolute z-10 w-full mt-1.5 bg-neutral-800 rounded-xl shadow-lg max-h-48 overflow-y-auto border border-neutral-700">
       <input
         v-model="search"
         placeholder="Filter tags..."
-        class="w-full px-3 py-1.5 bg-gray-800 border-b border-gray-700 text-sm text-gray-200 outline-none"
+        class="w-full px-4 py-2 bg-neutral-800 border-b border-neutral-700 rounded-t-xl text-sm text-neutral-200 outline-none placeholder-neutral-500"
       />
 
       <div
         v-for="tag in filteredTags"
         :key="tag.id"
-        class="px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-700 flex items-center gap-2"
+        class="px-4 py-2 text-sm cursor-pointer hover:bg-neutral-700/50 flex items-center gap-2.5 transition-colors"
         @click="toggle(tag.id)"
       >
-        <input type="checkbox" :checked="modelValue.includes(tag.id)" class="rounded" />
-        <span class="text-gray-200">{{ tag.name }}</span>
+        <input type="checkbox" :checked="modelValue.includes(tag.id)" class="rounded accent-indigo-500" />
+        <span class="text-neutral-200">{{ tag.name }}</span>
       </div>
 
       <!-- Add new inline -->
-      <div class="border-t border-gray-700 px-3 py-1.5 flex gap-2">
+      <div class="border-t border-neutral-700 px-4 py-2 flex gap-2">
         <input
           v-model="newTagName"
           placeholder="New tag..."
-          class="flex-1 bg-transparent text-sm text-gray-200 outline-none"
+          class="flex-1 bg-transparent text-sm text-neutral-200 outline-none placeholder-neutral-500"
           @keydown.enter.prevent="addNew"
         />
         <button
           type="button"
           @click="addNew"
-          class="text-xs text-blue-400 hover:text-blue-300"
+          class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
         >
           Add
         </button>
