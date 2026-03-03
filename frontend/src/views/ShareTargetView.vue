@@ -22,10 +22,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center h-screen bg-gray-950">
+  <div class="flex items-center justify-center h-screen bg-neutral-950">
     <div class="text-center">
-      <div class="w-8 h-8 border-2 border-gray-600 border-t-blue-400 rounded-full animate-spin mx-auto mb-4" />
-      <p class="text-gray-400">Adding to inbox...</p>
+      <div class="w-8 h-8 border-2 border-neutral-600 border-t-indigo-400 rounded-full animate-spin mx-auto mb-4" />
+      <p class="text-neutral-400">Adding to inbox...</p>
     </div>
   </div>
 </template>

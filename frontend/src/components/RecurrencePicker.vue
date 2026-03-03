@@ -53,24 +53,24 @@ watch([enabled, frequency, interval, daysOfWeek, dayOfMonth, weekOfMonth, monthl
 
 <template>
   <div>
-    <label class="flex items-center gap-2 text-sm text-gray-300 mb-2">
-      <input type="checkbox" v-model="enabled" class="rounded" />
+    <label class="flex items-center gap-2 text-sm text-neutral-300 mb-2">
+      <input type="checkbox" v-model="enabled" class="rounded accent-indigo-500" />
       Repeat
     </label>
 
-    <div v-if="enabled" class="space-y-2 pl-6">
+    <div v-if="enabled" class="space-y-3 pl-6">
       <!-- Frequency -->
       <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-400">Every</span>
+        <span class="text-sm text-neutral-400">Every</span>
         <input
           v-model.number="interval"
           type="number"
           min="1"
-          class="w-16 px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200"
+          class="w-16 px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
         />
         <select
           v-model="frequency"
-          class="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200"
+          class="px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none"
         >
           <option value="daily">day(s)</option>
           <option value="weekly">week(s)</option>
@@ -80,14 +80,14 @@ watch([enabled, frequency, interval, daysOfWeek, dayOfMonth, weekOfMonth, monthl
       </div>
 
       <!-- Weekly: day of week checkboxes -->
-      <div v-if="frequency === 'weekly'" class="flex gap-1">
+      <div v-if="frequency === 'weekly'" class="flex gap-1.5">
         <button
           v-for="(name, i) in dayNames"
           :key="i"
           type="button"
           :class="[
-            'w-8 h-8 rounded text-xs font-medium transition-colors',
-            daysOfWeek.includes(i) ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            'w-9 h-9 rounded-xl text-xs font-medium transition-colors',
+            daysOfWeek.includes(i) ? 'bg-indigo-500 text-white' : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
           ]"
           @click="daysOfWeek.includes(i) ? daysOfWeek.splice(daysOfWeek.indexOf(i), 1) : daysOfWeek.push(i)"
         >
@@ -98,12 +98,12 @@ watch([enabled, frequency, interval, daysOfWeek, dayOfMonth, weekOfMonth, monthl
       <!-- Monthly -->
       <div v-if="frequency === 'monthly'" class="space-y-2">
         <div class="flex gap-4">
-          <label class="flex items-center gap-1 text-sm text-gray-400">
-            <input type="radio" v-model="monthlyMode" value="dayOfMonth" />
+          <label class="flex items-center gap-1 text-sm text-neutral-400">
+            <input type="radio" v-model="monthlyMode" value="dayOfMonth" class="accent-indigo-500" />
             On day
           </label>
-          <label class="flex items-center gap-1 text-sm text-gray-400">
-            <input type="radio" v-model="monthlyMode" value="weekOfMonth" />
+          <label class="flex items-center gap-1 text-sm text-neutral-400">
+            <input type="radio" v-model="monthlyMode" value="weekOfMonth" class="accent-indigo-500" />
             On the
           </label>
         </div>
@@ -114,19 +114,19 @@ watch([enabled, frequency, interval, daysOfWeek, dayOfMonth, weekOfMonth, monthl
             type="number"
             min="1"
             max="31"
-            class="w-16 px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200"
+            class="w-16 px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
           />
         </div>
 
         <div v-else class="flex items-center gap-2">
-          <select v-model.number="weekOfMonth" class="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200">
+          <select v-model.number="weekOfMonth" class="px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none">
             <option :value="1">1st</option>
             <option :value="2">2nd</option>
             <option :value="3">3rd</option>
             <option :value="4">4th</option>
             <option :value="5">5th</option>
           </select>
-          <select v-model.number="daysOfWeek[0]" class="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200">
+          <select v-model.number="daysOfWeek[0]" class="px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none">
             <option v-for="(name, i) in dayNames" :key="i" :value="i">{{ name }}</option>
           </select>
         </div>
@@ -134,17 +134,17 @@ watch([enabled, frequency, interval, daysOfWeek, dayOfMonth, weekOfMonth, monthl
 
       <!-- Yearly -->
       <div v-if="frequency === 'yearly'" class="flex items-center gap-2">
-        <span class="text-sm text-gray-400">In</span>
-        <select v-model.number="monthOfYear" class="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200">
+        <span class="text-sm text-neutral-400">In</span>
+        <select v-model.number="monthOfYear" class="px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none">
           <option v-for="(name, i) in monthNames" :key="i" :value="i + 1">{{ name }}</option>
         </select>
-        <span class="text-sm text-gray-400">on day</span>
+        <span class="text-sm text-neutral-400">on day</span>
         <input
           v-model.number="dayOfMonth"
           type="number"
           min="1"
           max="31"
-          class="w-16 px-2 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200"
+          class="w-16 px-3 py-1.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
         />
       </div>
     </div>

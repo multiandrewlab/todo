@@ -110,20 +110,20 @@ function handleFileChange(e: Event) {
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60" @click="emit('close')" />
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="emit('close')" />
 
     <!-- Modal -->
-    <div class="relative bg-gray-900 border border-gray-700 rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-      <div class="p-4">
-        <h3 class="text-lg font-semibold mb-4">{{ isEditing ? 'Edit Task' : 'New Task' }}</h3>
+    <div class="relative bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-neutral-50 mb-5">{{ isEditing ? 'Edit Task' : 'New Task' }}</h3>
 
-        <form @submit.prevent="handleSave" class="space-y-3">
+        <form @submit.prevent="handleSave" class="space-y-4">
           <!-- Title -->
           <input
             v-model="title"
             placeholder="Task title"
             required
-            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 outline-none"
+            class="w-full px-4 py-2.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 placeholder-neutral-500 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
           />
 
           <!-- Notes -->
@@ -131,7 +131,7 @@ function handleFileChange(e: Event) {
             v-model="notes"
             placeholder="Notes (optional)"
             rows="3"
-            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 outline-none resize-none"
+            class="w-full px-4 py-2.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 placeholder-neutral-500 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30 resize-none"
           />
 
           <!-- URL -->
@@ -139,25 +139,25 @@ function handleFileChange(e: Event) {
             v-model="url"
             placeholder="URL (optional)"
             type="url"
-            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 outline-none"
+            class="w-full px-4 py-2.5 bg-neutral-800 rounded-xl text-sm text-neutral-200 placeholder-neutral-500 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
           />
 
           <!-- Due date -->
           <div>
-            <label class="text-xs text-gray-400 mb-1 block">Due date</label>
+            <label class="text-xs font-medium text-neutral-400 mb-1.5 block">Due date</label>
             <input
               v-model="dueDate"
               type="date"
-              class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-blue-500 outline-none"
+              class="px-4 py-2 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
             />
           </div>
 
           <!-- Status -->
           <div>
-            <label class="text-xs text-gray-400 mb-1 block">Status</label>
+            <label class="text-xs font-medium text-neutral-400 mb-1.5 block">Status</label>
             <select
               v-model="status"
-              class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200"
+              class="px-4 py-2 bg-neutral-800 rounded-xl text-sm text-neutral-200 outline-none"
             >
               <option value="inbox">Inbox</option>
               <option value="active">Active</option>
@@ -169,37 +169,37 @@ function handleFileChange(e: Event) {
 
           <!-- Tags -->
           <div>
-            <label class="text-xs text-gray-400 mb-1 block">Tags</label>
+            <label class="text-xs font-medium text-neutral-400 mb-1.5 block">Tags</label>
             <TagSelect v-model="tagIds" />
           </div>
 
           <!-- File upload (only for new tasks) -->
           <div v-if="!isEditing">
-            <label class="text-xs text-gray-400 mb-1 block">Attachments</label>
+            <label class="text-xs font-medium text-neutral-400 mb-1.5 block">Attachments</label>
             <input
               type="file"
               multiple
               @change="handleFileChange"
-              class="text-sm text-gray-400 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-gray-800 file:text-gray-300 file:cursor-pointer"
+              class="text-sm text-neutral-400 file:mr-3 file:py-1.5 file:px-4 file:rounded-xl file:border-0 file:bg-neutral-800 file:text-neutral-300 file:cursor-pointer file:font-medium"
             />
-            <div v-if="files.length" class="mt-1 text-xs text-gray-500">
+            <div v-if="files.length" class="mt-1.5 text-xs text-neutral-500">
               {{ files.length }} file(s) selected
             </div>
           </div>
 
           <!-- Buttons -->
-          <div class="flex justify-end gap-2 pt-2">
+          <div class="flex justify-end gap-3 pt-2">
             <button
               type="button"
               @click="emit('close')"
-              class="px-4 py-2 text-sm text-gray-400 hover:text-gray-200 transition-colors"
+              class="px-5 py-2.5 text-sm font-medium text-neutral-400 hover:text-neutral-200 transition-colors rounded-xl"
             >
               Cancel
             </button>
             <button
               type="submit"
               :disabled="saving || !title.trim()"
-              class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors disabled:opacity-50"
+              class="px-5 py-2.5 text-sm font-medium bg-indigo-500 text-white rounded-xl hover:bg-indigo-400 transition-colors disabled:opacity-50"
             >
               {{ saving ? 'Saving...' : isEditing ? 'Update' : 'Create' }}
             </button>

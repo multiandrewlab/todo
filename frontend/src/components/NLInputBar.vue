@@ -119,18 +119,18 @@ async function transcribeAndParse(audioBlob: Blob) {
       v-model="text"
       :disabled="loading || isRecording || isTranscribing"
       :placeholder="isRecording ? 'Listening...' : isTranscribing ? 'Transcribing...' : 'Add task naturally...'"
-      class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 outline-none"
+      class="w-full px-4 py-2.5 bg-neutral-800/50 rounded-xl text-sm text-neutral-200 placeholder-neutral-500 outline-none transition-shadow focus:ring-2 focus:ring-indigo-500/30"
       :class="hasMicSupport ? 'pr-16' : 'pr-8'"
     />
-    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+    <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
       <!-- Loading spinner -->
-      <div v-if="loading && !isRecording && !isTranscribing" >
-        <div class="w-4 h-4 border-2 border-gray-600 border-t-blue-400 rounded-full animate-spin" />
+      <div v-if="loading && !isRecording && !isTranscribing">
+        <div class="w-4 h-4 border-2 border-neutral-600 border-t-indigo-400 rounded-full animate-spin" />
       </div>
 
       <!-- Transcribing spinner -->
       <div v-if="isTranscribing">
-        <div class="w-4 h-4 border-2 border-gray-600 border-t-purple-400 rounded-full animate-spin" />
+        <div class="w-4 h-4 border-2 border-neutral-600 border-t-indigo-400 rounded-full animate-spin" />
       </div>
 
       <!-- Mic button -->
@@ -140,8 +140,8 @@ async function transcribeAndParse(audioBlob: Blob) {
         @pointerdown.prevent="startRecording"
         @pointerup.prevent="stopRecording"
         @pointerleave="stopRecording"
-        class="p-1 rounded transition-colors touch-none"
-        :class="isRecording ? 'text-red-400 animate-pulse' : 'text-gray-500 hover:text-gray-300'"
+        class="p-1 rounded-lg transition-colors touch-none"
+        :class="isRecording ? 'text-red-400 animate-pulse' : 'text-neutral-500 hover:text-indigo-400'"
         :title="isRecording ? 'Release to send' : 'Hold to speak'"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -153,7 +153,7 @@ async function transcribeAndParse(audioBlob: Blob) {
     </div>
 
     <!-- Mic error message -->
-    <p v-if="micError" class="text-xs text-red-400 mt-1">
+    <p v-if="micError" class="text-xs text-red-400 mt-1.5 px-1">
       {{ micError }}
     </p>
   </form>

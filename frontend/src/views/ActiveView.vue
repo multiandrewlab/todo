@@ -25,11 +25,11 @@ function handleSaved() {
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-semibold">Active</h2>
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-semibold text-neutral-50">Active</h2>
       <button
         @click="openNew"
-        class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors"
+        class="px-4 py-2 bg-indigo-500 text-white text-sm font-medium rounded-xl hover:bg-indigo-400 transition-colors"
       >
         + New Task
       </button>
